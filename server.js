@@ -2,19 +2,20 @@ const express = require("express");
 const socket = require("socket.io");
 const uuid = require("node-uuid");
 
-var app = express();
+var app = express(),
+	server,
+	io,
+	screens=[],
+	uuidArr=[];
 
 app.use(express.static('./public')) // serve static assets
 
-var server = app.listen(8000, function() { // listen to the port
+server = app.listen(8000, function() { // listen to the port
 	console.log('Game started!!!!');
 });
 
 //Socket setup
-var io = socket(server); // socket.io to work on this server
-
-var screens =[];
-var uuidArr =[];
+io = socket(server); // socket.io to work on this server
 
 function screen(socket, screenID) {
 	this.screenSocket = socket;
@@ -31,22 +32,25 @@ io.on('connection', function(socket) { // every client have differnt socket
 		var screenID = uuid();
 		uuidArr.push(screenID);
 		screens[screenID]= new screen(socket, screenID);
+		//screens.push(new screen(socket, screenID, screenNum));
+		io.sockets.emit('choose server', uuidArr);
 	});
 
-	socket.on('connect controller', function(callback) {
-		var registered = false;
-		for(var i=0; i<uuidArr.length; i++) {
-			if(screens[uuidArr[i]].length <2) {
-				screens[uuidArr[i]].controllers.push(socket);
-				screens[uuidArr[i]].length++;
-				registered = true;
-				screens[uuidArr[i]].screenSocket.emit('register controller', {contSocketID : socket.id});
-				break;
-			}
-		}
-		if(!registered) {
+	io.sockets.emit('choose server', uuidArr);
+
+	socket.on('connect controller', function(serverUuid, callback) {
+		//for(var i=0; i<uuidArr.length; i++) {
+		if(screens[serverUuid].length <2) {
+			screens[serverUuid].controllers.push(socket);
+			screens[serverUuid].length++;
+			screens[serverUuid].screenSocket.emit('register controller', {contSocketID : socket.id});
+		} else {
 			callback({register:false})
 		}
+		//}
+		/*if(!registered) {
+			callback({register:false})
+		}*/
 
 	});
 
