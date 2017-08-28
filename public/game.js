@@ -1,7 +1,8 @@
 // Make connection
 
 var socket = io.connect('http://localhost:8000'),
-	ball = document.querySelector('.ball'),
+	ball1 = document.querySelector('.ball1'),
+	ball2 = document.querySelector('.ball2'),
 	emitData,
 	moveLeft =0,
 	moveRight=0,
@@ -13,7 +14,7 @@ socket.emit('game screen');
 
 // listen for events
 // 
-socket.on('move', function(data, id) {
+socket.on('move', function(data, id, player) {
 	var noMatch = false;
 	for(var i =0; i<contJoined.length;i++) {
 		if(id === contJoined[i]) {
@@ -29,7 +30,12 @@ socket.on('move', function(data, id) {
 	} else {
 		moveLeft -= data.coord;
 	}
-	ball.style.marginLeft = moveLeft+"px";
+	if(player ===1) {
+		ball1.style.marginLeft = moveLeft+"px";
+	} else {
+		ball2.style.marginLeft = moveLeft+"px";
+	}
+	
 });
 
 socket.on('register controller', function(data) {

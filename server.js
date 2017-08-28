@@ -6,7 +6,8 @@ var app = express(),
 	server,
 	io,
 	screens=[],
-	uuidArr=[];
+	uuidArr=[],
+	controllers =[];
 
 app.use(express.static('./public')) // serve static assets
 
@@ -24,6 +25,11 @@ function screen(socket, screenID) {
 	this.length = 0;
 }
 
+/*function controller(socket, player) {
+	this.controllerSocket = socket;
+	this.player = player;
+}*/
+
 // listen for an event
 io.on('connection', function(socket) { // every client have differnt socket
 	console.log('made socket connection');
@@ -35,6 +41,10 @@ io.on('connection', function(socket) { // every client have differnt socket
 		//screens.push(new screen(socket, screenID, screenNum));
 		io.sockets.emit('choose server', uuidArr);
 	});
+
+	socket.on('select player', function(player) {
+		controllers[socket.id]= player;
+	})
 
 	io.sockets.emit('choose server', uuidArr);
 
@@ -55,6 +65,6 @@ io.on('connection', function(socket) { // every client have differnt socket
 	});
 
 	socket.on('move', function(data) {  //listen to that event
-		io.sockets.emit('move', data, socket.id); // all the different sockets connected
+		io.sockets.emit('move', data, socket.id, controllers[socket.id]); // all the different sockets connected
 	}) 
 }); 

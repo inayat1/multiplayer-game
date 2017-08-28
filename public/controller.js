@@ -3,6 +3,8 @@
 var socket = io.connect('http://localhost:8000'),
 	left = document.querySelector('.left'),
 	right = document.querySelector('.right'),
+	player1 = document.querySelector('.player1'),
+	player2 = document.querySelector('.player2'),
 	servers = document.querySelector('.servers'),
 	emitData,
 	moveLeft =0,
@@ -20,6 +22,18 @@ socket.on('choose server', function(screenUuidArr) {
 left.addEventListener('click', function() {
 	emitData('left');
 });
+
+player1.addEventListener('click', function() {
+	selectPlayer(1);
+});
+
+player2.addEventListener('click', function() {
+	selectPlayer(2);
+});
+
+selectPlayer = function(player) {
+	socket.emit('select player', player);
+}
 
 servers.addEventListener('click', function(event) {
 	var serverUuid = event.target.getAttribute('data-uuid');

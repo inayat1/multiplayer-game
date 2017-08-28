@@ -1,5 +1,12 @@
-div.ball {
+div.ball1 {
 	width:100px;
-	height:100px;
+	height:10px;
 	background: #999;
+}
+
+div.ball2 {
+	margin-top: 20px;
+	width:100px;
+	height:10px;
+	background: red;
 }
