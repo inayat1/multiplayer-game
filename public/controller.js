@@ -6,6 +6,9 @@ var socket = io.connect('http://localhost:8000'),
 	player1 = document.querySelector('.player1'),
 	player2 = document.querySelector('.player2'),
 	servers = document.querySelector('.servers'),
+	serverSection = document.querySelector('.server-section'),
+	selectPayer = document.querySelector('.select-payer'),
+	controller = document.querySelector('.controller'),
 	emitData,
 	moveLeft =0,
 	moveRight=0;
@@ -14,6 +17,9 @@ socket.on('choose server', function(screenUuidArr) {
 	var serverList ='';
 	for(var i =0; i<screenUuidArr.length; i++) {
 		serverList+="<li data-uuid="+ screenUuidArr[i] +" >Server"+ (i+1) +"</li>";
+	}
+	if(screenUuidArr.length === 0) {
+		serverList = "<li>No server found</li>"
 	}
 	servers.innerHTML = serverList;
 });
@@ -33,6 +39,8 @@ player2.addEventListener('click', function() {
 
 selectPlayer = function(player) {
 	socket.emit('select player', player);
+	selectPayer.classList.add("hidden");
+	controller.classList.remove("hidden");
 }
 
 servers.addEventListener('click', function(event) {
@@ -40,6 +48,9 @@ servers.addEventListener('click', function(event) {
 	socket.emit('connect controller', serverUuid, function(data) {
 		if(!data.register) {
 			alert('limit full');
+		} else {
+			serverSection.classList.add("hidden");
+			selectPayer.classList.remove("hidden");
 		}
 	});
 });

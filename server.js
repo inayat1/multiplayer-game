@@ -54,6 +54,7 @@ io.on('connection', function(socket) { // every client have differnt socket
 			screens[serverUuid].controllers.push(socket);
 			screens[serverUuid].length++;
 			screens[serverUuid].screenSocket.emit('register controller', {contSocketID : socket.id});
+			callback({register:true})
 		} else {
 			callback({register:false})
 		}

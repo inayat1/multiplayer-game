@@ -2,16 +2,24 @@
 <html>
 <head>
 	<title></title>
-	<link rel="stylesheet" href="./game.css" />
+	<link rel="stylesheet" href="./controller.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 </head>
 <body>
-	<h1> Start the game </h1>
-	<ul class="servers"></ul>
-	<input class="player1" type="button" value="player 1" />
-	<input class="player2" type="button" value="player 2" />
-	<input class="left" type="button" value="left" />
-	<input class="right" type="button" value="right" />
+	<div class="server-section">
+		<h1> Select the server </h1>
+		<ul class="servers"></ul>
+	</div>
+	<div class="select-payer hidden">
+		<h1> Select the player </h1>
+		<input class="player1" type="button" value="player 1" />
+		<input class="player2" type="button" value="player 2" />
+	</div>
+	<div class="controller hidden">
+		<h1> Game On !!!</h1>
+		<input class="left" type="button" value="left" />
+		<input class="right" type="button" value="right" />
+	</div>
 	<script src="controller.js"></script>
 </body>
 </html>
