@@ -39,6 +39,8 @@ io.on('connection', function(socket) { // every client have differnt socket
 		uuidArr.push(screenID);
 		screens[screenID]= new screen(socket, screenID);
 		//screens.push(new screen(socket, screenID, screenNum));
+		socket.nickname = screenID;
+		console.log(io.sockets);
 		io.sockets.emit('choose server', uuidArr);
 	});
 
@@ -51,6 +53,7 @@ io.on('connection', function(socket) { // every client have differnt socket
 	socket.on('connect controller', function(serverUuid, callback) {
 		//for(var i=0; i<uuidArr.length; i++) {
 		if(screens[serverUuid].length <2) {
+			socket.myscreen = serverUuid;
 			screens[serverUuid].controllers.push(socket);
 			screens[serverUuid].length++;
 			screens[serverUuid].screenSocket.emit('register controller', {contSocketID : socket.id});
@@ -64,6 +67,20 @@ io.on('connection', function(socket) { // every client have differnt socket
 		}*/
 
 	});
+
+	socket.on('disconnect', function(socket) {
+		if (socket.nickname) {
+			screens[socket.nickname].controllers.emit('server disconnected');
+			screens.splice(socket.nickname,1);
+			uuidArr.splice(uuidArr.indexOf(socket.nickname),1);
+			io.sockets.emit('choose server', uuidArr);
+		} else {
+			var mycontroller = screens[socket.myscreen].controllers,
+				index = controllers.indexOf(socket);
+			mycontroller.splice(index,1);
+			screens[socket.myscreen].length--;
+		}
+	})
 
 	socket.on('move', function(data) {  //listen to that event
 		io.sockets.emit('move', data, socket.id, controllers[socket.id]); // all the different sockets connected
