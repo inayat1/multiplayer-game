@@ -11,18 +11,19 @@ var socket = io.connect('http://localhost:8000'),
 	controller = document.querySelector('.controller'),
 	emitData,
 	moveLeft =0,
-	moveRight=0;
+	moveRight=0,
+	refreshServerList;
 
 socket.on('choose server', function(screenUuidArr) {
-	var serverList ='';
-	for(var i =0; i<screenUuidArr.length; i++) {
-		serverList+="<li data-uuid="+ screenUuidArr[i] +" >Server"+ (i+1) +"</li>";
-	}
-	if(screenUuidArr.length === 0) {
-		serverList = "<li>No server found</li>"
-	}
-	servers.innerHTML = serverList;
+	refreshServerList(screenUuidArr);
 });
+
+socket.on('server disconnected', function(screenUuidArr) {
+	serverSection.classList.remove("hidden");
+	selectPayer.classList.add("hidden");
+	controller.classList.add("hidden");
+	refreshServerList(screenUuidArr);
+})
 
 // emit events
 left.addEventListener('click', function() {
@@ -36,6 +37,17 @@ player1.addEventListener('click', function() {
 player2.addEventListener('click', function() {
 	selectPlayer(2);
 });
+
+refreshServerList = function(screenUuidArr) {
+	var serverList ='';
+	for(var i =0; i<screenUuidArr.length; i++) {
+		serverList+="<li data-uuid="+ screenUuidArr[i] +" >Server"+ (i+1) +"</li>";
+	}
+	if(screenUuidArr.length === 0) {
+		serverList = "<li>No server found</li>"
+	}
+	servers.innerHTML = serverList;
+}
 
 selectPlayer = function(player) {
 	socket.emit('select player', player);
